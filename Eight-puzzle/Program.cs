@@ -1,10 +1,12 @@
-﻿namespace Eight_puzzle
+﻿using Eight_puzzle.ClientSide;
+
+namespace Eight_puzzle
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        protected static void Main(string[] args)
         {
-        
+            Output.Menu();
         }
     }
 }
