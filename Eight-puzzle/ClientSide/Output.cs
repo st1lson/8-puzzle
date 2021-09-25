@@ -14,17 +14,29 @@ namespace Eight_puzzle.ClientSide
 
         public static void Menu()
         {
-            _menu = CreateMenu();
+            if (_menu == null)
+            {
+                _menu = CreateMenu();
+            }
+
             Console.WriteLine(_menu);
             string input = Console.ReadLine();
             if (!Int32.TryParse(input, out var value))
             {
                 Error("Input should be a number");
             }
+
+            if (_puzzle is null)
+            {
+                _puzzle = new Puzzle();
+                _puzzle.Initialize();
+            }
             
+            PrintBoard(_puzzle.Board);
+            Console.WriteLine();
             Action(value);
-            Console.Clear();
-            Menu();
+            /*Console.Clear();
+            Menu();*/
         }
 
         public static void Error(string errorMessage)
@@ -34,13 +46,13 @@ namespace Eight_puzzle.ClientSide
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        public static void PrintBoard()
+        public static void PrintBoard(Cell[,] board)
         {
-            for (int i = 0; i < _puzzle.Board.GetLength(0); i++)
+            for (int i = 0; i < board.GetLength(0); i++)
             {
-                for (int j = 0; j < _puzzle.Board.GetLength(1); j++)
+                for (int j = 0; j < board.GetLength(1); j++)
                 {
-                    Console.Write(_puzzle.Board[i, j].Value + "\t");
+                    Console.Write(board[i, j].Value + "\t");
                 }
 
                 Console.WriteLine();
@@ -52,7 +64,8 @@ namespace Eight_puzzle.ClientSide
             switch (value)
             {
                 case 1:
-                    new IDS(_puzzle).IterativeDeepeningSearch();
+                    Console.WriteLine();
+                    PrintBoard(new IDS(_puzzle).IterativeDeepeningSearch());
                     break;
                 case 2:
                     new RBFS(_puzzle).RecursiveBestFirstSearch();

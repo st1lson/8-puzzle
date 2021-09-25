@@ -49,7 +49,7 @@ namespace Eight_puzzle.Core
             for (int i = 0; i < Board.GetLength(0); i++)
             {
                 for (int j = 0; j < Board.GetLength(1); j++)
-                {
+                {   
                     int row = _random.Next(3);
                     int column = _random.Next(3);
                     Cell temp = Board[i, j];

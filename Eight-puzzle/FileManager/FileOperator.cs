@@ -53,11 +53,7 @@ namespace Eight_puzzle.FileManager
                     j = 0;
                 }
             }
-
-            foreach (var cell in board)
-            {
-                Console.WriteLine(cell);
-            }
+            
             return new Puzzle(board);
         }
 
