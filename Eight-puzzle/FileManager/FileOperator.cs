@@ -37,11 +37,6 @@ namespace Eight_puzzle.FileManager
                         board[i, j] = new Cell
                         {
                             Value = cell,
-                            Position = new Position
-                            {
-                                XPos = i,
-                                YPos = j
-                            },
                             IsEmpty = cell == 0,
                             IsRight = cell == i * 3 + j + 1 
                         };

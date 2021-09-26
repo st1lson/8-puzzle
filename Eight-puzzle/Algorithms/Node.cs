@@ -1,4 +1,5 @@
-﻿using Eight_puzzle.Core;
+﻿using System;
+using Eight_puzzle.Core;
 using System.Collections.Generic;
 
 namespace Eight_puzzle.Algorithms
@@ -20,18 +21,33 @@ namespace Eight_puzzle.Algorithms
 
         public void Expand()
         {
+            SetEmpty();
             (int row, int column) = FindEmpty();
-            Cell[,] board = Board;
-            MoveTop(board, row, column);
-            MoveRight(board, row, column);
-            MoveDown(board, row, column);
-            MoveLeft(board, row, column);
+            MoveTop(row, column);
+            MoveRight(row, column);
+            MoveDown(row, column);
+            MoveLeft(row, column);
         }
 
-        private void MoveTop(Cell[,] board, int row, int column)
+        public List<Node> PathToSolution()
+        {
+            List<Node> nodes = new List<Node>();
+            Node node = this;
+            while (node.ParentNode is not null)
+            {
+                nodes.Add(node);
+                node = node.ParentNode;
+            }
+
+            return nodes;
+        }
+
+        private void MoveTop(int row, int column)
         {
             if (row > 0)
             {
+                Cell[,] board = new Cell[3, 3];
+                Array.Copy(Board, board, Board.Length);
                 Swap(ref board,
                     row: row,
                     column: column,
@@ -41,10 +57,12 @@ namespace Eight_puzzle.Algorithms
             }
         }
 
-        private void MoveRight(Cell[,] board, int row, int column)
+        private void MoveRight(int row, int column)
         {
             if (column < 2)
             {
+                Cell[,] board = new Cell[3, 3];
+                Array.Copy(Board, board, Board.Length);
                 Swap(ref board,
                     row: row,
                     column: column,
@@ -54,10 +72,12 @@ namespace Eight_puzzle.Algorithms
             }
         }
 
-        private void MoveDown(Cell[,] board, int row, int column)
+        private void MoveDown(int row, int column)
         {
             if (row < 2)
             {
+                Cell[,] board = new Cell[3, 3];
+                Array.Copy(Board, board, Board.Length);
                 Swap(ref board,
                     row: row,
                     column: column,
@@ -67,10 +87,12 @@ namespace Eight_puzzle.Algorithms
             }
         }
 
-        private void MoveLeft(Cell[,] board, int row, int column)
+        private void MoveLeft(int row, int column)
         {
             if (column > 0)
             {
+                Cell[,] board = new Cell[3, 3];
+                Array.Copy(Board, board, Board.Length);
                 Swap(ref board,
                     row: row,
                     column: column,
@@ -101,6 +123,22 @@ namespace Eight_puzzle.Algorithms
             Cell temp = board[row, column];
             board[row, column] = board[secondRow, secondColumn];
             board[secondRow, secondColumn] = temp;
+            SetEmpty();
+        }
+
+        private void SetEmpty()
+        {
+            foreach (var cell in Board)
+            {
+                if (cell.Value == 0)
+                {
+                    cell.IsEmpty = true;
+                }
+                else
+                {
+                    cell.IsEmpty = false;
+                }
+            }
         }
     }
 }

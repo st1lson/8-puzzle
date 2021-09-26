@@ -1,4 +1,5 @@
 ﻿using System;
+using Eight_puzzle.ClientSide;
 using Eight_puzzle.Core;
 using Eight_puzzle.Enums;
 
@@ -8,16 +9,22 @@ namespace Eight_puzzle.Algorithms
     {
         private readonly Puzzle _puzzle;
 
-        public IDS(Puzzle puzzle) => _puzzle = puzzle;
+        public IDS(Puzzle puzzle)
+        {
+            _puzzle = puzzle;
+        }
 
         public Cell[,] IterativeDeepeningSearch()
         {
+            Cell[,] board;
+            State result;
             for (int depth = 0; depth < Int32.MaxValue; depth++)
             {
-                (Cell[,] board, State result) = DepthLimitedSearch(depth);
-                if (result != State.Cutoff)
+                (board, result) = DepthLimitedSearch(depth);
+                if (board is not null && result == State.Result)
                 {
                     Console.WriteLine($"Depth: {depth}");
+                    Output.PrintBoard(board);
                     return board;
                 }
             }
@@ -30,8 +37,14 @@ namespace Eight_puzzle.Algorithms
         private (Cell[,], State) RecursiveDepthLimitedSearch(Node node, Cell[,] problem, int limit)
         {
             bool cutoffOccured = false;
-            if (GoalTest(node.Board))
+            if (GoalTest(problem, node.Board))
             {
+                /*foreach(Node item in node.PathToSolution())
+                {
+                    Console.WriteLine();
+                    Output.PrintBoard(item.Board);
+                    Console.WriteLine();
+                }*/
                 return (node.Board, State.Result);
             }
             else if (node.Depth == limit)
@@ -54,7 +67,7 @@ namespace Eight_puzzle.Algorithms
                     }
                 }
             }
-
+            
             if (cutoffOccured)
             {
                 return (null, State.Cutoff);
@@ -65,13 +78,13 @@ namespace Eight_puzzle.Algorithms
             }
         }
         
-        private bool GoalTest(Cell[,] board)
+        private bool GoalTest(Cell[,] problem, Cell[,] board)
         {
             for (int i = 0; i < board.GetLength(0); i++)
             {
                 for (int j = 0; j < board.GetLength(1); j++)
                 {
-                    if (i * 3 + j + 1 == board[i, j].Value)
+                    if (problem[i, j].Value == board[i, j].Value)
                     {
                         return false;
                     }

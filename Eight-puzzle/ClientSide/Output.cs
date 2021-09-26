@@ -14,11 +14,7 @@ namespace Eight_puzzle.ClientSide
 
         public static void Menu()
         {
-            if (_menu == null)
-            {
-                _menu = CreateMenu();
-            }
-
+            _menu ??= CreateMenu();
             Console.WriteLine(_menu);
             string input = Console.ReadLine();
             if (!Int32.TryParse(input, out var value))
@@ -30,10 +26,10 @@ namespace Eight_puzzle.ClientSide
             {
                 _puzzle = new Puzzle();
                 _puzzle.Initialize();
+                _puzzle.Shuffle();
             }
             
             PrintBoard(_puzzle.Board);
-            Console.WriteLine();
             Action(value);
             /*Console.Clear();
             Menu();*/
@@ -65,7 +61,7 @@ namespace Eight_puzzle.ClientSide
             {
                 case 1:
                     Console.WriteLine();
-                    PrintBoard(new IDS(_puzzle).IterativeDeepeningSearch());
+                    new IDS(_puzzle).IterativeDeepeningSearch();
                     break;
                 case 2:
                     new RBFS(_puzzle).RecursiveBestFirstSearch();

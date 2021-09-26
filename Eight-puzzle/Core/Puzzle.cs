@@ -21,6 +21,7 @@ namespace Eight_puzzle.Core
         public void Initialize()
         {
             int value = 1;
+            bool isEmpty = false;
             for (int i = 0; i < Board.GetLength(0); i++)
             {
                 for (int j = 0; j < Board.GetLength(1); j++)
@@ -28,17 +29,14 @@ namespace Eight_puzzle.Core
                     if (i == 2 && j == 2)
                     {
                         value = 0;
+                        isEmpty = true;
                     }
                     
                     Board[i, j] = new Cell
                     {
                         Value = value++,
-                        Position = new Position
-                        {
-                            XPos = i,
-                            YPos = j
-                        },
-                        IsRight = true
+                        IsRight = true,
+                        IsEmpty = isEmpty
                     };
                 }
             }
