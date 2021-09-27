@@ -9,10 +9,7 @@ namespace Eight_puzzle.Algorithms
     {
         private readonly Puzzle _puzzle;
 
-        public IDS(Puzzle puzzle)
-        {
-            _puzzle = puzzle;
-        }
+        public IDS(Puzzle puzzle) => _puzzle = puzzle;
 
         public Cell[,] IterativeDeepeningSearch()
         {
@@ -39,12 +36,11 @@ namespace Eight_puzzle.Algorithms
             bool cutoffOccured = false;
             if (GoalTest(problem, node.Board))
             {
-                /*foreach(Node item in node.PathToSolution())
+                foreach(Node item in node.PathToSolution())
                 {
-                    Console.WriteLine();
                     Output.PrintBoard(item.Board);
-                    Console.WriteLine();
-                }*/
+                }
+
                 return (node.Board, State.Result);
             }
             else if (node.Depth == limit)
@@ -77,7 +73,7 @@ namespace Eight_puzzle.Algorithms
                 return (null, State.Failure);
             }
         }
-        
+
         private bool GoalTest(Cell[,] problem, Cell[,] board)
         {
             for (int i = 0; i < board.GetLength(0); i++)

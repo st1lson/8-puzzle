@@ -53,6 +53,7 @@ namespace Eight_puzzle.ClientSide
 
                 Console.WriteLine();
             }
+            Console.WriteLine();
         }
 
         private static void Action(int value)

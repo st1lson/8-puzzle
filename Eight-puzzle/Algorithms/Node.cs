@@ -10,13 +10,15 @@ namespace Eight_puzzle.Algorithms
         public int Depth { get; }
         public Node ParentNode { get; }
         public List<Node> Childs { get; }
+        public int PathCost { get; set; }
 
-        public Node(Cell[,] board, int depth = 0, Node parentNode = null)
+        public Node(Cell[,] board, int depth = 0, Node parentNode = null, int pathCost = 0)
         {
             Board = board;
             Childs = new List<Node>();
             Depth = depth;
             ParentNode = parentNode;
+            PathCost = pathCost;
         }
 
         public void Expand()
@@ -39,6 +41,7 @@ namespace Eight_puzzle.Algorithms
                 node = node.ParentNode;
             }
 
+            nodes.Reverse();
             return nodes;
         }
 
