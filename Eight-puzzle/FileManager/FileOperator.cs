@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using Eight_puzzle.ClientSide;
+using Eight_puzzle.ConsoleManager;
 using Eight_puzzle.Core;
 
 namespace Eight_puzzle.FileManager

@@ -10,7 +10,7 @@ namespace Eight_puzzle.Algorithms
         public int Depth { get; }
         public Node ParentNode { get; }
         public List<Node> Childs { get; }
-        public int PathCost { get; set; }
+        public int PathCost { get; internal set; }
 
         public Node(Cell[,] board, int depth = 0, Node parentNode = null, int pathCost = 0)
         {
@@ -44,6 +44,41 @@ namespace Eight_puzzle.Algorithms
             nodes.Reverse();
             return nodes;
         }
+
+        public int Heuristic()
+        {
+            int heuristic = 0;
+            for (int i = 0; i < Board.GetLength(0); i++)
+            {
+                for (int j = 0; j < Board.GetLength(1); j++)
+                {
+                    if (Board[i, j].Value != 0 && Board[i, j].Value != i * j + j + 1)
+                    {
+                        heuristic++;
+                    }
+                }
+            }
+
+            return heuristic;
+        }
+
+        public bool GoalTest()
+        {
+            for (int i = 0; i < Board.GetLength(0); i++)
+            {
+                for (int j = 0; j < Board.GetLength(1); j++)
+                {
+                    if (Board[i, j].Value == i * 3 + j + 1)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public List<Node> GetChilds() => Childs;
 
         private void MoveTop(int row, int column)
         {

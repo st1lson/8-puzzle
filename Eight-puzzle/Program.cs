@@ -1,4 +1,4 @@
-﻿using Eight_puzzle.ClientSide;
+﻿using Eight_puzzle.ConsoleManager;
 
 namespace Eight_puzzle
 {

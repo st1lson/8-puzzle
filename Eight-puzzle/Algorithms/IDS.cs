@@ -1,5 +1,5 @@
 ﻿using System;
-using Eight_puzzle.ClientSide;
+using Eight_puzzle.ConsoleManager;
 using Eight_puzzle.Core;
 using Eight_puzzle.Enums;
 
@@ -34,7 +34,7 @@ namespace Eight_puzzle.Algorithms
         private (Cell[,], State) RecursiveDepthLimitedSearch(Node node, Cell[,] problem, int limit)
         {
             bool cutoffOccured = false;
-            if (GoalTest(problem, node.Board))
+            if (node.GoalTest())
             {
                 foreach(Node item in node.PathToSolution())
                 {
@@ -72,22 +72,6 @@ namespace Eight_puzzle.Algorithms
             {
                 return (null, State.Failure);
             }
-        }
-
-        private bool GoalTest(Cell[,] problem, Cell[,] board)
-        {
-            for (int i = 0; i < board.GetLength(0); i++)
-            {
-                for (int j = 0; j < board.GetLength(1); j++)
-                {
-                    if (problem[i, j].Value == board[i, j].Value)
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
         }
     }
 }

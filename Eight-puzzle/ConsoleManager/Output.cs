@@ -4,7 +4,7 @@ using Eight_puzzle.Algorithms;
 using Eight_puzzle.Core;
 using Eight_puzzle.FileManager;
 
-namespace Eight_puzzle.ClientSide
+namespace Eight_puzzle.ConsoleManager
 {
     internal static class Output
     {
@@ -17,22 +17,23 @@ namespace Eight_puzzle.ClientSide
             _menu ??= CreateMenu();
             Console.WriteLine(_menu);
             string input = Console.ReadLine();
-            if (!Int32.TryParse(input, out var value))
+            if (!int.TryParse(input, out var value))
             {
                 Error("Input should be a number");
             }
 
-            if (_puzzle is null)
-            {
-                _puzzle = new Puzzle();
-                _puzzle.Initialize();
-                _puzzle.Shuffle();
-            }
-            
+            _puzzle ??= new Puzzle();
+            _puzzle.Initialize();
+
             PrintBoard(_puzzle.Board);
             Action(value);
-            /*Console.Clear();
-            Menu();*/
+
+            Console.WriteLine("Press 'Enter' to continue");
+            if (Console.ReadKey().Key.Equals(ConsoleKey.Enter))
+            {
+                Console.Clear();
+                Menu();
+            }
         }
 
         public static void Error(string errorMessage)
@@ -53,6 +54,7 @@ namespace Eight_puzzle.ClientSide
 
                 Console.WriteLine();
             }
+
             Console.WriteLine();
         }
 
@@ -65,6 +67,7 @@ namespace Eight_puzzle.ClientSide
                     new IDS(_puzzle).IterativeDeepeningSearch();
                     break;
                 case 2:
+                    Console.WriteLine();
                     new RBFS(_puzzle).RecursiveBestFirstSearch();
                     break;
                 case 3:
@@ -77,7 +80,7 @@ namespace Eight_puzzle.ClientSide
                     break;
             }
         }
-        
+
         private static string CreateMenu()
         {
             StringBuilder stringBuilder = new StringBuilder();
@@ -86,7 +89,7 @@ namespace Eight_puzzle.ClientSide
             stringBuilder.AppendLine("Use '2' to use RBFS algorithm");
             stringBuilder.AppendLine("Use '3' to change source file");
             stringBuilder.AppendLine("Use '0' to exit");
-            
+
             return stringBuilder.ToString();
         }
     }
