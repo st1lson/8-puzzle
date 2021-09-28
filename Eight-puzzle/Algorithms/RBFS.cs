@@ -39,10 +39,7 @@ namespace Eight_puzzle.Algorithms
 
             foreach (var successor in node.Childs)
             {
-                if (successor.PathCost < node.PathCost)
-                {
-                    successor.PathCost = node.PathCost;
-                }
+                successor.PathCost = node.PathCost + successor.Heuristic();
             }
 
             while (true)
