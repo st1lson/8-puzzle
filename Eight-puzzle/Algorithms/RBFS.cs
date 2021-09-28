@@ -51,7 +51,6 @@ namespace Eight_puzzle.Algorithms
             foreach (var successor in node.Childs)
             {
                 successor.PathCost = successor.Heuristic();
-                Console.WriteLine(successor.PathCost);
             }
 
             while (true)
