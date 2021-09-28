@@ -52,7 +52,7 @@ namespace Eight_puzzle.Algorithms
             {
                 for (int j = 0; j < Board.GetLength(1); j++)
                 {
-                    if (Board[i, j].Value != 0 && Board[i, j].Value != i * j + j + 1)
+                    if (Board[i, j].Value != 0 && Board[i, j].Value == i * 3 + j + 1)
                     {
                         heuristic++;
                     }

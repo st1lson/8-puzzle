@@ -2,6 +2,7 @@
 using Eight_puzzle.Core;
 using Eight_puzzle.Enums;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Eight_puzzle.Algorithms
@@ -9,8 +10,13 @@ namespace Eight_puzzle.Algorithms
     internal sealed class RBFS
     {
         private readonly Puzzle _puzzle;
+        private readonly List<Node> _visited;
 
-        public RBFS(Puzzle puzzle) => _puzzle = puzzle;
+        public RBFS(Puzzle puzzle) 
+        { 
+            _puzzle = puzzle; 
+            _visited = new List<Node>();
+        }
 
         public Cell[,] RecursiveBestFirstSearch()
         {
@@ -26,20 +32,26 @@ namespace Eight_puzzle.Algorithms
 
         private (Node, State, int) RecursiveBFS(Node node, int fLimit)
         {
+            if (!_visited.Contains(node))
+            {
+                _visited.Add(node);
+            }
+
             if (node.GoalTest())
             {
                 return (node, State.Result, fLimit);
             }
 
             node.Expand();
-            if (node.Childs is null)
+            if (node.Childs.Count < 1)
             {
                 return (null, State.Failure, Int32.MaxValue);
             }
 
             foreach (var successor in node.Childs)
             {
-                successor.PathCost = node.PathCost + successor.Heuristic();
+                successor.PathCost = successor.Heuristic();
+                Console.WriteLine(successor.PathCost);
             }
 
             while (true)
@@ -55,14 +67,14 @@ namespace Eight_puzzle.Algorithms
                     return (null, State.Failure, best.PathCost);
                 }
 
-                int alternative = childs[^1].PathCost;
-                (Node newNode, State result, int newFLimit) = RecursiveBFS(best, Math.Min(fLimit, alternative));
-
+                int alternative = childs[1].PathCost;
+                (Node newNode, State result, int newFLimit) = RecursiveBFS(best, Math.Min(alternative, fLimit));
+                
                 best.PathCost = newFLimit;
 
                 if (newNode is not null)
                 {
-                    return (node, result, 0);
+                    return (newNode, State.Result, newFLimit);
                 }
             }
         }
