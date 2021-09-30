@@ -23,7 +23,6 @@ namespace Eight_puzzle.Algorithms
 
         public void Expand()
         {
-            SetEmpty();
             (int row, int column) = FindEmpty();
             MoveTop(row, column);
             MoveRight(row, column);
@@ -161,22 +160,6 @@ namespace Eight_puzzle.Algorithms
             Cell temp = board[row, column];
             board[row, column] = board[secondRow, secondColumn];
             board[secondRow, secondColumn] = temp;
-            SetEmpty();
-        }
-
-        private void SetEmpty()
-        {
-            foreach (var cell in Board)
-            {
-                if (cell.Value == 0)
-                {
-                    cell.IsEmpty = true;
-                }
-                else
-                {
-                    cell.IsEmpty = false;
-                }
-            }
         }
     }
 }

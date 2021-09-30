@@ -7,43 +7,44 @@ namespace Eight_puzzle.Algorithms
 {
     internal sealed class IDS
     {
+        private int _iterations;
+        private int _nodesGenerated;
         private readonly Puzzle _puzzle;
 
         public IDS(Puzzle puzzle) => _puzzle = puzzle;
 
         public Cell[,] IterativeDeepeningSearch()
         {
-            Cell[,] board;
-            State result;
             for (int depth = 0; depth < Int32.MaxValue; depth++)
             {
-                (board, result) = DepthLimitedSearch(depth);
-                if (board is not null && result == State.Result)
+                (Node node, State result) = DepthLimitedSearch(depth);
+                if (node is not null && result == State.Result)
                 {
-                    Console.WriteLine($"Depth: {depth}");
-                    Output.PrintBoard(board);
-                    return board;
+                    Output.PrintStats(_iterations, _nodesGenerated, node.Depth);
+                    Output.PrintBoard(node.Board);
+                    return node.Board;
                 }
             }
 
             return default;
         }
 
-        private (Cell[,], State) DepthLimitedSearch(int depth) => RecursiveDepthLimitedSearch(new Node(_puzzle.Board), _puzzle.Board, depth);
+        private (Node, State) DepthLimitedSearch(int depth) => RecursiveDepthLimitedSearch(new Node(_puzzle.Board), _puzzle.Board, depth);
 
-        private (Cell[,], State) RecursiveDepthLimitedSearch(Node node, Cell[,] problem, int limit)
+        private (Node, State) RecursiveDepthLimitedSearch(Node node, Cell[,] problem, int limit)
         {
+            _iterations++;
             bool cutoffOccured = false;
             if (node.GoalTest())
             {
-                foreach(Node item in node.PathToSolution())
+                foreach (var item in node.PathToSolution())
                 {
                     Output.PrintBoard(item.Board);
                 }
 
-                return (node.Board, State.Result);
+                return (node, State.Result);
             }
-            else if (node.Depth == limit)
+            else if (node.Depth >= limit)
             {
                 return (null, State.Cutoff);
             }
@@ -52,18 +53,19 @@ namespace Eight_puzzle.Algorithms
                 node.Expand();
                 foreach (var successor in node.Childs)
                 {
-                    (Cell[,] board, State result) = RecursiveDepthLimitedSearch(successor, problem, limit);
+                    _nodesGenerated++;
+                    (Node newNode, State result) = RecursiveDepthLimitedSearch(successor, problem, limit);
                     if (result == State.Cutoff)
                     {
                         cutoffOccured = true;
                     }
                     else if (result != State.Failure)
                     {
-                        return (board, State.Result);
+                        return (newNode, State.Result);
                     }
                 }
             }
-            
+
             if (cutoffOccured)
             {
                 return (null, State.Cutoff);

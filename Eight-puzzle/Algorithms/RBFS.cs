@@ -9,6 +9,8 @@ namespace Eight_puzzle.Algorithms
 {
     internal sealed class RBFS
     {
+        private int _iterations;
+        private int _nodesGenerated;
         private readonly Puzzle _puzzle;
         private readonly List<Node> _visited;
 
@@ -21,8 +23,9 @@ namespace Eight_puzzle.Algorithms
         public Cell[,] RecursiveBestFirstSearch()
         {
             (Node node, _, _) = RecursiveBFS(new Node(_puzzle.Board), Int32.MaxValue);
-            if (node.Board is not null)
+            if (node is not null)
             {
+                Output.PrintStats(_iterations, _nodesGenerated, node.Depth);
                 Output.PrintBoard(node.Board);
                 return node.Board;
             }
@@ -32,6 +35,7 @@ namespace Eight_puzzle.Algorithms
 
         private (Node, State, int) RecursiveBFS(Node node, int fLimit)
         {
+            _iterations++;
             if (!_visited.Contains(node))
             {
                 _visited.Add(node);
@@ -39,6 +43,11 @@ namespace Eight_puzzle.Algorithms
 
             if (node.GoalTest())
             {
+                foreach(var item in node.PathToSolution())
+                {
+                    Output.PrintBoard(item.Board);
+                }
+
                 return (node, State.Result, fLimit);
             }
 
@@ -50,7 +59,8 @@ namespace Eight_puzzle.Algorithms
 
             foreach (var successor in node.Childs)
             {
-                successor.PathCost = successor.Heuristic();
+                successor.PathCost = node.Depth + successor.Heuristic();
+                _nodesGenerated++;
             }
 
             while (true)

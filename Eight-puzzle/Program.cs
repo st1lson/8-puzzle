@@ -4,9 +4,6 @@ namespace Eight_puzzle
 {
     internal class Program
     {
-        protected static void Main(string[] args)
-        {
-            Output.Menu();
-        }
+        protected static void Main(string[] args) => Output.Menu();
     }
 }

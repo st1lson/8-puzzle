@@ -22,9 +22,13 @@ namespace Eight_puzzle.ConsoleManager
                 Error("Input should be a number");
             }
 
-            _puzzle ??= new Puzzle();
-            _puzzle.Initialize();
+            if (_puzzle is null)
+            {
+                _fileOperator = new FileOperator();
+                _puzzle = _fileOperator.DeserializePuzzle();
+            }
 
+            Console.WriteLine("Initial board:");
             PrintBoard(_puzzle.Board);
             Action(value);
 
@@ -58,6 +62,16 @@ namespace Eight_puzzle.ConsoleManager
             Console.WriteLine();
         }
 
+        public static void PrintStats(int iterations, int nodesGenerated, int depth)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append($"Number of iterations: {iterations}\n");
+            stringBuilder.Append($"Number of generated nodes: {nodesGenerated}\n");
+            stringBuilder.Append($"Depth: {depth}\n");
+
+            Console.WriteLine(stringBuilder.ToString());
+        }
+
         private static void Action(int value)
         {
             switch (value)
@@ -71,6 +85,9 @@ namespace Eight_puzzle.ConsoleManager
                     new RBFS(_puzzle).RecursiveBestFirstSearch();
                     break;
                 case 3:
+                    _puzzle.Shuffle();
+                    break;
+                case 4:
                     Console.WriteLine("Enter a file path:");
                     _fileOperator ??= new FileOperator();
                     _fileOperator.ChangeFile(Console.ReadLine());
@@ -87,7 +104,8 @@ namespace Eight_puzzle.ConsoleManager
             stringBuilder.AppendLine("Menu:");
             stringBuilder.AppendLine("Use '1' to use IDS algorithm");
             stringBuilder.AppendLine("Use '2' to use RBFS algorithm");
-            stringBuilder.AppendLine("Use '3' to change source file");
+            stringBuilder.AppendLine("Use '3' to shuffle the board");
+            stringBuilder.AppendLine("Use '4' to change source file");
             stringBuilder.AppendLine("Use '0' to exit");
 
             return stringBuilder.ToString();
