@@ -36,12 +36,13 @@ namespace Eight_puzzle.Core
                     Board[i, j] = new Cell
                     {
                         Value = value++,
-                        IsRight = true,
                         IsEmpty = isEmpty
                     };
                 }
             }
         }
+
+        public bool IsSolvable() => GetInvCount() % 2 == 0;
 
         public void Shuffle()
         {
@@ -56,6 +57,28 @@ namespace Eight_puzzle.Core
                     Board[row, column] = temp;
                 }
             }
+
+            if (!IsSolvable())
+            {
+                Shuffle();
+            }
+        }
+
+        private int GetInvCount()
+        {
+            int invCount = 0;
+            for (int i = 0; i < 3 - 1; i++)
+            {
+                for (int j = i + 1; j < 3; j++)
+                {
+                    if (Board[j, i].Value > Board[i, j].Value)
+                    {
+                        invCount++;
+                    }
+                }
+            }
+
+            return invCount;
         }
     }
 }

@@ -48,7 +48,7 @@ namespace Eight_puzzle.Algorithms
                     Output.PrintBoard(item.Board);
                 }
 
-                return (node, State.Result, fLimit);
+                return (node, State.Result, 0);
             }
 
             node.Expand();

@@ -24,8 +24,11 @@ namespace Eight_puzzle.ConsoleManager
 
             if (_puzzle is null)
             {
-                _fileOperator = new FileOperator();
-                _puzzle = _fileOperator.DeserializePuzzle();
+                _puzzle = new Puzzle();
+                _puzzle.Initialize();
+                _puzzle.Shuffle();
+                /*_fileOperator = new FileOperator();
+                _puzzle = _fileOperator.DeserializePuzzle();*/
             }
 
             Console.WriteLine("Initial board:");

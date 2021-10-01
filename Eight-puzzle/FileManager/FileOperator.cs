@@ -38,7 +38,6 @@ namespace Eight_puzzle.FileManager
                         {
                             Value = cell,
                             IsEmpty = cell == 0,
-                            IsRight = cell == i * 3 + j + 1 
                         };
                         
                         j++;

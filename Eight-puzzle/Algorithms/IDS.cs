@@ -59,7 +59,7 @@ namespace Eight_puzzle.Algorithms
                     {
                         cutoffOccured = true;
                     }
-                    else if (result != State.Failure)
+                    else if (newNode is not null)
                     {
                         return (newNode, State.Result);
                     }
