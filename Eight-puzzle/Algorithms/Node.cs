@@ -1,33 +1,63 @@
-﻿using System;
-using Eight_puzzle.Core;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Eight_puzzle.Enums;
 
 namespace Eight_puzzle.Algorithms
 {
-    internal sealed class Node
+    internal class Node
     {
-        public Cell[,] Board { get; }
+        public int[,] Board { get; }
         public int Depth { get; }
         public Node ParentNode { get; }
-        public List<Node> Childs { get; }
+        public List<Node> Childs { get; set; }
         public int PathCost { get; internal set; }
 
-        public Node(Cell[,] board, int depth = 0, Node parentNode = null, int pathCost = 0)
+        public Node(int[,] board)
         {
             Board = board;
+            ParentNode = null;
+            Depth = 0;
+            PathCost = Depth + Heuristic(board);
             Childs = new List<Node>();
-            Depth = depth;
-            ParentNode = parentNode;
-            PathCost = pathCost;
+        }
+        public Node(Node parent, int[,] board)
+        {
+            Board = board;
+            ParentNode = parent;
+            Depth = parent.Depth + 1;
+            PathCost = Depth + Heuristic(board);
+            Childs = new List<Node>();
         }
 
         public void Expand()
         {
-            (int row, int column) = FindEmpty();
-            MoveTop(row, column);
-            MoveRight(row, column);
-            MoveDown(row, column);
-            MoveLeft(row, column);
+            (int row, int column) = FindEmpty(Board);
+            List<Move> moves = FindWays(row, column);
+            foreach (Move move in moves)
+            {
+                int[,] board = (int[,])Board.Clone();
+                switch (move)
+                {
+                    case Move.Left:
+                        Swap(ref board, row, column, row, column + 1);
+                        break;
+                    case Move.Right:
+                        Swap(ref board, row, column, row, column - 1);
+                        break;
+                    case Move.Top:
+                        Swap(ref board, row, column, row + 1, column);
+                        break;
+                    case Move.Down:
+                        Swap(ref board, row, column, row - 1, column);
+                        break;
+
+                }
+
+                if (ParentNode is null || IsNotStepBack(board, ParentNode.Board))
+                {
+                    Childs.Add(new Node(this, board));
+                }
+            }
         }
 
         public List<Node> PathToSolution()
@@ -44,14 +74,14 @@ namespace Eight_puzzle.Algorithms
             return nodes;
         }
 
-        public int Heuristic()
+        public static int Heuristic(int[,] board)
         {
             int heuristic = 0;
-            for (int i = 0; i < Board.GetLength(0); i++)
+            for (int i = 0; i < board.GetLength(0); i++)
             {
-                for (int j = 0; j < Board.GetLength(1); j++)
+                for (int j = 0; j < board.GetLength(1); j++)
                 {
-                    if (Board[i, j].Value != i * 3 + j + 1 && !Board[i, j].IsEmpty)
+                    if (board[i, j] != i * 3 + j)
                     {
                         heuristic++;
                     }
@@ -61,13 +91,13 @@ namespace Eight_puzzle.Algorithms
             return heuristic;
         }
 
-        public bool GoalTest()
+        public static bool GoalTest(int[,] board)
         {
-            for (int i = 0; i < Board.GetLength(0); i++)
+            for (int i = 0; i < board.GetLength(0); i++)
             {
-                for (int j = 0; j < Board.GetLength(1); j++)
+                for (int j = 0; j < board.GetLength(1); j++)
                 {
-                    if (Board[i, j].Value != i * 3 + j + 1 && !Board[i, j].IsEmpty)
+                    if (board[i, j] != i * 3 + j)
                     {
                         return false;
                     }
@@ -79,73 +109,13 @@ namespace Eight_puzzle.Algorithms
 
         public List<Node> GetChilds() => Childs;
 
-        private void MoveTop(int row, int column)
-        {
-            if (row > 0)
-            {
-                Cell[,] board = new Cell[3, 3];
-                Array.Copy(Board, board, Board.Length);
-                Swap(ref board,
-                    row: row,
-                    column: column,
-                    secondRow: row - 1,
-                    secondColumn: column);
-                Childs.Add(new Node(board, Depth + 1, this));
-            }
-        }
-
-        private void MoveRight(int row, int column)
-        {
-            if (column < 2)
-            {
-                Cell[,] board = new Cell[3, 3];
-                Array.Copy(Board, board, Board.Length);
-                Swap(ref board,
-                    row: row,
-                    column: column,
-                    secondRow: row,
-                    secondColumn: column + 1);
-                Childs.Add(new Node(board, Depth + 1, this));
-            }
-        }
-
-        private void MoveDown(int row, int column)
-        {
-            if (row < 2)
-            {
-                Cell[,] board = new Cell[3, 3];
-                Array.Copy(Board, board, Board.Length);
-                Swap(ref board,
-                    row: row,
-                    column: column,
-                    secondRow: row + 1,
-                    secondColumn: column);
-                Childs.Add(new Node(board, Depth + 1, this));
-            }
-        }
-
-        private void MoveLeft(int row, int column)
-        {
-            if (column > 0)
-            {
-                Cell[,] board = new Cell[3, 3];
-                Array.Copy(Board, board, Board.Length);
-                Swap(ref board,
-                    row: row,
-                    column: column,
-                    secondRow: row,
-                    secondColumn: column - 1);
-                Childs.Add(new Node(board, Depth + 1, this));
-            }
-        }
-
-        private (int, int) FindEmpty()
+        private static (int, int) FindEmpty(int[,] board)
         {
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    if (Board[i, j].IsEmpty)
+                    if (board[i, j] == 0)
                     {
                         return (i, j);
                     }
@@ -155,9 +125,48 @@ namespace Eight_puzzle.Algorithms
             return (-1, -1);
         }
 
-        private void Swap(ref Cell[,] board, int row = 0, int column = 0, int secondRow = 0, int secondColumn = 0)
+        private static List<Move> FindWays(int row, int column)
         {
-            Cell temp = board[row, column];
+            List<Move> moves = new();
+            if (row <= 1)
+            {
+                moves.Add(Move.Top);
+            }
+            if (column >= 1)
+            {
+                moves.Add(Move.Right);
+            }
+            if (row >= 1)
+            {
+                moves.Add(Move.Down);
+            }
+            if (column <= 1)
+            {
+                moves.Add(Move.Left);
+            }
+
+            return moves;
+        }
+
+        private static bool IsNotStepBack(int[,] childBoard, int[,] parentBoard)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    if (childBoard[i, j] != parentBoard[i, j])
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static void Swap(ref int[,] board, int row = 0, int column = 0, int secondRow = 0, int secondColumn = 0)
+        {
+            int temp = board[row, column];
             board[row, column] = board[secondRow, secondColumn];
             board[secondRow, secondColumn] = temp;
         }

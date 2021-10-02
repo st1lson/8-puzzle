@@ -24,7 +24,7 @@ namespace Eight_puzzle.FileManager
                 return null;
             }
             
-            Cell[,] board = new Cell[3, 3];
+            int[,] board = new int[3, 3];
             int i = 0;
             int j = 0;
             using (StreamReader streamReader = new StreamReader(_path, Encoding.Default))
@@ -34,12 +34,7 @@ namespace Eight_puzzle.FileManager
                     int[] cells = Array.ConvertAll(streamReader.ReadLine()?.Split(" ", StringSplitOptions.RemoveEmptyEntries) ?? throw new Exception("Corrupted cells in file"), int.Parse);
                     foreach (var cell in cells)
                     {
-                        board[i, j] = new Cell
-                        {
-                            Value = cell,
-                            IsEmpty = cell == 0,
-                        };
-                        
+                        board[i, j] = cell;
                         j++;
                     }
 
@@ -66,7 +61,7 @@ namespace Eight_puzzle.FileManager
                 {
                     for (int j = 0; j < 3; j++)
                     {
-                        stringBuilder.Append(puzzle.Board[i, j].Value + " ");
+                        stringBuilder.Append(puzzle.Board[i, j] + " ");
                     }
 
                     stringBuilder.Append('\n');

@@ -1,79 +1,60 @@
 ﻿using System;
 using Eight_puzzle.ConsoleManager;
-using Eight_puzzle.Core;
 using Eight_puzzle.Enums;
 
 namespace Eight_puzzle.Algorithms
 {
-    internal sealed class IDS
+    internal class IDS
     {
         private int _iterations;
         private int _nodesGenerated;
-        private readonly Puzzle _puzzle;
 
-        public IDS(Puzzle puzzle) => _puzzle = puzzle;
-
-        public Cell[,] IterativeDeepeningSearch()
+        public void IterativeDeepeningSearch(int[,] problem)
         {
             for (int depth = 0; depth < Int32.MaxValue; depth++)
             {
-                (Node node, State result) = DepthLimitedSearch(depth);
-                if (node is not null && result == State.Result)
+                Result result = DepthLimitedSearch(problem, depth);
+                if (result.State == State.Result)
                 {
-                    Output.PrintStats(_iterations, _nodesGenerated, node.Depth);
-                    Output.PrintBoard(node.Board);
-                    return node.Board;
+                    Output.PrintStats(_iterations, _nodesGenerated, result.Node.Depth);
+                    foreach (var item in result.Node.PathToSolution())
+                    {
+                        Output.PrintBoard(item.Board);
+                    }
+
+                    return;
                 }
             }
-
-            return default;
         }
 
-        private (Node, State) DepthLimitedSearch(int depth) => RecursiveDepthLimitedSearch(new Node(_puzzle.Board), _puzzle.Board, depth);
+        private Result DepthLimitedSearch(int[,] problem, int depth) => RecursiveDepthLimitedSearch(new Node(problem), depth);
 
-        private (Node, State) RecursiveDepthLimitedSearch(Node node, Cell[,] problem, int limit)
+        private Result RecursiveDepthLimitedSearch(Node node, int limit)
         {
             _iterations++;
-            bool cutoffOccured = false;
-            if (node.GoalTest())
+            if (Node.GoalTest(node.Board))
             {
-                foreach (var item in node.PathToSolution())
-                {
-                    Output.PrintBoard(item.Board);
-                }
-
-                return (node, State.Result);
+                return new(node, State.Result);
             }
             else if (node.Depth >= limit)
             {
-                return (null, State.Cutoff);
+                return new(node, State.Cutoff);
             }
             else
             {
                 node.Expand();
-                foreach (var successor in node.Childs)
+                foreach (Node child in node.Childs)
                 {
                     _nodesGenerated++;
-                    (Node newNode, State result) = RecursiveDepthLimitedSearch(successor, problem, limit);
-                    if (result == State.Cutoff)
+                    Result result = RecursiveDepthLimitedSearch(child, limit);
+                    if (result.State == State.Result)
                     {
-                        cutoffOccured = true;
-                    }
-                    else if (newNode is not null)
-                    {
-                        return (newNode, State.Result);
+                        return result;
                     }
                 }
             }
 
-            if (cutoffOccured)
-            {
-                return (null, State.Cutoff);
-            }
-            else
-            {
-                return (null, State.Failure);
-            }
+            return new(node, State.Failure);
         }
     }
 }

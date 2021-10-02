@@ -24,11 +24,11 @@ namespace Eight_puzzle.ConsoleManager
 
             if (_puzzle is null)
             {
-                _puzzle = new Puzzle();
+                /*_puzzle = new Puzzle();
                 _puzzle.Initialize();
-                _puzzle.Shuffle();
-                /*_fileOperator = new FileOperator();
-                _puzzle = _fileOperator.DeserializePuzzle();*/
+                _puzzle.Shuffle();*/
+                _fileOperator = new FileOperator();
+                _puzzle = _fileOperator.DeserializePuzzle();
             }
 
             Console.WriteLine("Initial board:");
@@ -50,13 +50,13 @@ namespace Eight_puzzle.ConsoleManager
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        public static void PrintBoard(Cell[,] board)
+        public static void PrintBoard(int[,] board)
         {
             for (int i = 0; i < board.GetLength(0); i++)
             {
                 for (int j = 0; j < board.GetLength(1); j++)
                 {
-                    Console.Write(board[i, j].Value + "\t");
+                    Console.Write(board[i, j] + "\t");
                 }
 
                 Console.WriteLine();
@@ -81,7 +81,7 @@ namespace Eight_puzzle.ConsoleManager
             {
                 case 1:
                     Console.WriteLine();
-                    new IDS(_puzzle).IterativeDeepeningSearch();
+                    new IDS().IterativeDeepeningSearch(_puzzle.Board);
                     break;
                 case 2:
                     Console.WriteLine();

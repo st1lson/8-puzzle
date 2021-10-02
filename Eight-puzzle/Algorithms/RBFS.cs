@@ -2,66 +2,51 @@
 using Eight_puzzle.Core;
 using Eight_puzzle.Enums;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Eight_puzzle.Algorithms
 {
-    internal sealed class RBFS
+    internal class RBFS
     {
         private int _iterations;
         private int _nodesGenerated;
         private readonly Puzzle _puzzle;
-        private readonly List<Node> _visited;
 
         public RBFS(Puzzle puzzle) 
         { 
             _puzzle = puzzle; 
-            _visited = new List<Node>();
         }
 
-        public Cell[,] RecursiveBestFirstSearch()
+        public void RecursiveBestFirstSearch()
         {
-            (Node node, _, _) = RecursiveBFS(new Node(_puzzle.Board), Int32.MaxValue);
-            if (node is not null)
+            Result result = RecursiveBFS(new Node(_puzzle.Board), Int32.MaxValue);
+            if (result.State == State.Result)
             {
-                Output.PrintStats(_iterations, _nodesGenerated, node.Depth);
-                Output.PrintBoard(node.Board);
-                return node.Board;
-            }
-
-            return default;
-        }
-
-        private (Node, State, int) RecursiveBFS(Node node, int fLimit)
-        {
-            _iterations++;
-            if (!_visited.Contains(node))
-            {
-                _visited.Add(node);
-            }
-
-            if (node.GoalTest())
-            {
-                foreach(var item in node.PathToSolution())
+                Output.PrintStats(_iterations, _nodesGenerated, result.Node.Depth);
+                foreach (var item in result.Node.PathToSolution())
                 {
                     Output.PrintBoard(item.Board);
                 }
 
-                return (node, State.Result, 0);
+                return;
+            }
+        }
+
+        private Result RecursiveBFS(Node node, int fLimit)
+        {
+            _iterations++;
+            if (Node.GoalTest(node.Board))
+            {
+                return new(node, State.Result);
             }
 
             node.Expand();
-            if (node.Childs.Count < 1)
+            if (node.Childs.Count == 0)
             {
-                return (null, State.Failure, Int32.MaxValue);
+                return new(node, State.Failure);
             }
 
-            foreach (var successor in node.Childs)
-            {
-                successor.PathCost = node.Depth + successor.Heuristic();
-                _nodesGenerated++;
-            }
+            _nodesGenerated += node.Childs.Count;
 
             while (true)
             {
@@ -73,17 +58,26 @@ namespace Eight_puzzle.Algorithms
                 Node best = childs[0];
                 if (best.PathCost > fLimit)
                 {
-                    return (null, State.Failure, best.PathCost);
+                    return new(node, State.Failure, best.PathCost);
                 }
 
-                int alternative = childs[1].PathCost;
-                (Node newNode, State result, int newFLimit) = RecursiveBFS(best, Math.Min(alternative, fLimit));
-                
-                best.PathCost = newFLimit;
-
-                if (newNode is not null)
+                int alternative;
+                if (node.Childs.Count == 1)
                 {
-                    return (newNode, State.Result, newFLimit);
+                    alternative = best.PathCost;
+                }
+                else
+                {
+                    alternative = childs[1].PathCost;
+                }
+
+                Result result = RecursiveBFS(best, Math.Min(alternative, fLimit));
+
+                best.PathCost = result.PathCost;
+
+                if (result.State == State.Result)
+                {
+                    return result;
                 }
             }
         }
