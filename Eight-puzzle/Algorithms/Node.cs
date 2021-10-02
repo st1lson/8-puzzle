@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Eight_puzzle.Enums;
 
 namespace Eight_puzzle.Algorithms
@@ -9,7 +8,7 @@ namespace Eight_puzzle.Algorithms
         public int[,] Board { get; }
         public int Depth { get; }
         public Node ParentNode { get; }
-        public List<Node> Childs { get; set; }
+        public List<Node> Childs { get; }
         public int PathCost { get; internal set; }
 
         public Node(int[,] board)
@@ -20,7 +19,8 @@ namespace Eight_puzzle.Algorithms
             PathCost = Depth + Heuristic(board);
             Childs = new List<Node>();
         }
-        public Node(Node parent, int[,] board)
+
+        private Node(Node parent, int[,] board)
         {
             Board = board;
             ParentNode = parent;
@@ -73,24 +73,7 @@ namespace Eight_puzzle.Algorithms
             nodes.Reverse();
             return nodes;
         }
-
-        public static int Heuristic(int[,] board)
-        {
-            int heuristic = 0;
-            for (int i = 0; i < board.GetLength(0); i++)
-            {
-                for (int j = 0; j < board.GetLength(1); j++)
-                {
-                    if (board[i, j] != i * 3 + j)
-                    {
-                        heuristic++;
-                    }
-                }
-            }
-
-            return heuristic;
-        }
-
+        
         public static bool GoalTest(int[,] board)
         {
             for (int i = 0; i < board.GetLength(0); i++)
@@ -125,6 +108,23 @@ namespace Eight_puzzle.Algorithms
             return (-1, -1);
         }
 
+        private static int Heuristic(int[,] board)
+        {
+            int heuristic = 0;
+            for (int i = 0; i < board.GetLength(0); i++)
+            {
+                for (int j = 0; j < board.GetLength(1); j++)
+                {
+                    if (board[i, j] != i * 3 + j)
+                    {
+                        heuristic++;
+                    }
+                }
+            }
+
+            return heuristic;
+        }
+        
         private static List<Move> FindWays(int row, int column)
         {
             List<Move> moves = new();

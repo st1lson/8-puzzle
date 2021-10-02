@@ -4,7 +4,7 @@ using Eight_puzzle.Enums;
 
 namespace Eight_puzzle.Algorithms
 {
-    internal class IDS
+    internal class Ids
     {
         private int _iterations;
         private int _nodesGenerated;

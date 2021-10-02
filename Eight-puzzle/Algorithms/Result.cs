@@ -11,11 +11,11 @@ namespace Eight_puzzle.Algorithms
         public int PathCost { get; set; }
 
         public Result() { }
-        public Result(Node node, State state, int pathCost = Int32.MaxValue)
+        public Result(Node node, State state)
         {
             Node = node;
             Depth = node.Depth;
-            PathCost = pathCost;
+            PathCost = node.PathCost;
             State = state;
         }
     }

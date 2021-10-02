@@ -36,7 +36,7 @@ namespace Eight_puzzle.Core
             }
         }
 
-        public bool IsSolvable() => GetInvCount() % 2 == 0;
+        private bool IsSolvable() => GetInvCount() % 2 == 0;
 
         public void Shuffle()
         {

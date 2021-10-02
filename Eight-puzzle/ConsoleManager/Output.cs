@@ -81,11 +81,11 @@ namespace Eight_puzzle.ConsoleManager
             {
                 case 1:
                     Console.WriteLine();
-                    new IDS().IterativeDeepeningSearch(_puzzle.Board);
+                    new Ids().IterativeDeepeningSearch(_puzzle.Board);
                     break;
                 case 2:
                     Console.WriteLine();
-                    new RBFS(_puzzle).RecursiveBestFirstSearch();
+                    new Rbfs().RecursiveBestFirstSearch(_puzzle.Board);
                     break;
                 case 3:
                     _puzzle.Shuffle();
