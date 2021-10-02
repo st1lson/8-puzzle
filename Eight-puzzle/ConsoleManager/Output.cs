@@ -30,9 +30,13 @@ namespace Eight_puzzle.ConsoleManager
                 _fileOperator = new FileOperator();
                 _puzzle = _fileOperator.DeserializePuzzle();
             }
-
-            Console.WriteLine("Initial board:");
-            PrintBoard(_puzzle.Board);
+            
+            if (value is 1 or 2)
+            {
+                Console.WriteLine("Initial board:");
+                PrintBoard(_puzzle.Board);
+            }
+            
             Action(value);
 
             Console.WriteLine("Press 'Enter' to continue");
@@ -89,6 +93,7 @@ namespace Eight_puzzle.ConsoleManager
                     break;
                 case 3:
                     _puzzle.Shuffle();
+                    PrintBoard(_puzzle.Board);
                     break;
                 case 4:
                     Console.WriteLine("Enter a file path:");
