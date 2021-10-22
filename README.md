@@ -1,5 +1,5 @@
 # 8-puzzle
-## Task
+## Heuristic function
 Find the number of game pieces that are out of place
 ## Algorithms
   - [x] [IDS (Iterative deepening depth-first search)](https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search)
